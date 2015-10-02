@@ -86,8 +86,12 @@ public class Test : MonoBehaviour {
 			break;
 		case 2 : //LOAD INFO
 			LoadInfo();	
-
-
+			break;
+		case 3 : //CHANGE PATH
+			filePath = Path.Combine(key_Path.text, key_FileName.text);
+			
+			text_FilePathInput.text = filePath;
+			text_FilePathOutput.text = filePath;
 			break;
 		default: break;
 		}
@@ -167,38 +171,18 @@ public class Test : MonoBehaviour {
 		image_Output.color = Color.white;
 		image_Output.texture = (Texture2D)Serializer.GetFromDictionary(myKeyImage);
 
-		float ratio_image = (float)image_Output.texture.width / (float)image_Output.texture.height;
-		float ratio_container = image_Output.rectTransform.rect.width / image_Output.rectTransform.rect.height;
-		
-		if(ratio_image < ratio_container){
-			float newWidth = image_Output.rectTransform.rect.height * (float)image_Output.texture.width / (float)image_Output.texture.height;
-			image_Output.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,newWidth);
-		} else{
-			float newHeight = image_Output.rectTransform.rect.width * (float)image_Output.texture.height / (float)image_Output.texture.width;				
-			image_Output.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,newHeight);
+		if(image_Output.texture != null && image_Output.texture.width > 0 && image_Output.texture.height > 0){
+			float ratio_image = (float)image_Output.texture.width / (float)image_Output.texture.height;
+			float ratio_container = image_Output.rectTransform.rect.width / image_Output.rectTransform.rect.height;
+			
+			if(ratio_image < ratio_container){
+				float newWidth = image_Output.rectTransform.rect.height * (float)image_Output.texture.width / (float)image_Output.texture.height;
+				image_Output.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,newWidth);
+			} else{
+				float newHeight = image_Output.rectTransform.rect.width * (float)image_Output.texture.height / (float)image_Output.texture.width;				
+				image_Output.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,newHeight);
+			}
 		}
-
-
-
-//		Serializer.LoadDictionary(Application.persistentDataPath + "/dict.dat");
-//		
-//		string str = "";
-//		
-//		//Convert.ChangeType(o1, MySerializer.GetFromDictionary("Name").GetType())
-//		str += Serializer.GetFromDictionary("Name") + "\n";
-//		str += Serializer.GetFromDictionary("Age") + "\n";
-//		str += Serializer.GetFromDictionary("Height") + "\n";
-//		
-//		
-//		List<Vector3> list = Serializer.GetFromDictionary("Points") as List<Vector3>;
-//		str += "List Vector:\n";
-//		for(int i = 0 ; i < list.Count ; ++i){
-//			str += "\t" + list[i] + "\n";
-//		}
-		
-//		GameObject.Find("TextStruct").GetComponent<Text>().text = str;
-//		
-//		GameObject.Find("RawImage").GetComponent<RawImage>().texture = MySerializer.GetFromDictionary("Image") as Texture2D;
 	}
 	#endregion
 

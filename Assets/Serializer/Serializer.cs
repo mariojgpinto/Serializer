@@ -7,6 +7,15 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class Serializer {
 	#region VARIABLES
+	public enum TEXTURE2D_COMPRESSION_TYPE{
+		RAW = 0,
+		PNG = 1,
+		JPG = 2
+	};
+
+	public static TEXTURE2D_COMPRESSION_TYPE Texture2DCompressionType = TEXTURE2D_COMPRESSION_TYPE.PNG;
+	static TEXTURE2D_COMPRESSION_TYPE Texture2DCompressionType_old = TEXTURE2D_COMPRESSION_TYPE.PNG;
+
 	static SurrogateSelector ss = null;
 
 	static Dictionary<string, object> dict = new Dictionary<string, object>();
@@ -142,7 +151,7 @@ public class Serializer {
 		}
 	}
 
-	sealed class Texture2DSerializationSurrogate : ISerializationSurrogate {		
+	sealed class Texture2DSerializationSurrogate : ISerializationSurrogate {
 		// Method called to serialize a Color object
 		public void GetObjectData(System.Object obj,
 		                          SerializationInfo info, StreamingContext context) {
@@ -157,8 +166,21 @@ public class Serializer {
 			info.AddValue("width", texture.width);
 			info.AddValue("height", texture.height);
 			info.AddValue("format", texture.format);
+
+			switch((int)Serializer.Texture2DCompressionType){
+			case 1:
+				info.AddValue("values", texture.EncodeToPNG());
+				break;
+			case 2:
+				info.AddValue("values", texture.EncodeToJPG());
+				break;
+			case 0:
+			default:
+				info.AddValue("values", texture.GetRawTextureData());
+				break;
+			}
 			//info.AddValue("values", texture.EncodeToPNG());
-			info.AddValue("values", texture.GetRawTextureData());
+
 		}
 		
 		// Method called to deserialize a Color object
@@ -178,8 +200,17 @@ public class Serializer {
 			          "Format:" + format + "\n" + 
 			          "");
 
-			//texture.LoadImage((byte[])info.GetValue("values", typeof(byte[])));
-			texture.LoadRawTextureData((byte[])info.GetValue("values", typeof(byte[])));
+			switch((int)Serializer.Texture2DCompressionType){
+			case 1:
+			case 2:
+				texture.LoadImage((byte[])info.GetValue("values", typeof(byte[])));
+				break;
+			case 0:
+			default:
+				texture.LoadRawTextureData((byte[])info.GetValue("values", typeof(byte[])));
+				break;
+			}
+
 			texture.Apply();
 			obj = texture;
 			return obj;
@@ -214,6 +245,8 @@ public class Serializer {
 		//TEXTURE2D
 		Texture2DSerializationSurrogate texture_ss = new Texture2DSerializationSurrogate();
 		ss.AddSurrogate(typeof(Texture2D), new StreamingContext(StreamingContextStates.All), texture_ss);
+
+		Texture2DCompressionType_old = Texture2DCompressionType;
 	}
 	#endregion
 
@@ -223,6 +256,15 @@ public class Serializer {
 
 		if(ss == null){
 			CreateSurrogates();
+		}
+
+		if(Texture2DCompressionType_old != Texture2DCompressionType){
+			ss.RemoveSurrogate(typeof(Texture2D), new StreamingContext(StreamingContextStates.All));
+
+			Texture2DSerializationSurrogate texture_ss = new Texture2DSerializationSurrogate();
+			ss.AddSurrogate(typeof(Texture2D), new StreamingContext(StreamingContextStates.All), texture_ss);
+			
+			Texture2DCompressionType_old = Texture2DCompressionType;
 		}
 
 		bf.SurrogateSelector = ss;
@@ -258,6 +300,15 @@ public class Serializer {
 			
 			if(ss == null){
 				CreateSurrogates();
+			}
+
+			if(Texture2DCompressionType_old != Texture2DCompressionType){
+				ss.RemoveSurrogate(typeof(Texture2D), new StreamingContext(StreamingContextStates.All));
+				
+				Texture2DSerializationSurrogate texture_ss = new Texture2DSerializationSurrogate();
+				ss.AddSurrogate(typeof(Texture2D), new StreamingContext(StreamingContextStates.All), texture_ss);
+				
+				Texture2DCompressionType_old = Texture2DCompressionType;
 			}
 			
 			bf.SurrogateSelector = ss;
