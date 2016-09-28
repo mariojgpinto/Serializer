@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public class Serializer {
+public class StaticSerializer {
 	#region VARIABLES
 	public enum TEXTURE2D_COMPRESSION_TYPE{
 		RAW = 0,
@@ -18,7 +18,7 @@ public class Serializer {
 
 	static SurrogateSelector ss = null;
 
-	Dictionary<string, object> dict = new Dictionary<string, object>();
+	static Dictionary<string, object> dict = new Dictionary<string, object>();
 	#endregion
 
 	#region SURRUGATES
@@ -250,7 +250,7 @@ public class Serializer {
 	}
 	#endregion
 
-	public void Save(object obj, string path){
+	public static void Save(object obj, string path){
 		BinaryFormatter bf = new BinaryFormatter();
 		FileStream file = File.Create (path);
 
@@ -273,7 +273,7 @@ public class Serializer {
 		file.Close();
 	}
 
-	public object Load(string path){
+	public static object Load(string path){
 		if(File.Exists(path)) {
 			BinaryFormatter bf = new BinaryFormatter();
 			
@@ -293,7 +293,7 @@ public class Serializer {
 		return null;
 	}
 
-	public bool SaveDictionary(string path){
+	public static bool SaveDictionary(string path){
 		if(dict.Count > 0){
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Create (path);
@@ -322,7 +322,7 @@ public class Serializer {
 		return false;
 	}
 	
-	public bool LoadDictionary(string path){
+	public static bool LoadDictionary(string path){
 		if(File.Exists(path)) {
 			BinaryFormatter bf = new BinaryFormatter();
 			
@@ -342,7 +342,7 @@ public class Serializer {
 		return false;
 	}
 
-	public bool AddToDictionary(string key, object obj){
+	public static bool AddToDictionary(string key, object obj){
 		if(!dict.ContainsKey(key)){
 			dict.Add(key,obj);
 			return true;
@@ -350,20 +350,20 @@ public class Serializer {
 		return false;
 	}
 
-	public object GetFromDictionary(string key){
+	public static object GetFromDictionary(string key){
 		if(dict.ContainsKey(key))
 			return dict[key];
 		return null;
 	}
 
-	public List<string> GetAllKeys(){
+	public static List<string> GetAllKeys(){
 		string[] keys = new string[dict.Keys.Count];
 		dict.Keys.CopyTo(keys,0);
 
 		return new List<string>(keys);
 	}
 
-	public void ClearDictionary() {
+	public static void ClearDictionary() {
 		dict.Clear();
 	}
 }

@@ -138,25 +138,25 @@ public class Test : MonoBehaviour {
 	#region SAVE_LOAD
 	// Use this for initialization
 	public void SaveInfo () {
-		Serializer.AddToDictionary(myKeyString	, myValueString);
-		Serializer.AddToDictionary(myKeyInt		, myValueInt);
-		Serializer.AddToDictionary(myKeyFloat	, myValueFloat);
-		Serializer.AddToDictionary(myKeyList	, myValueList);
-		Serializer.AddToDictionary(myKeyImage	, myValueImage);
+		StaticSerializer.AddToDictionary(myKeyString	, myValueString);
+		StaticSerializer.AddToDictionary(myKeyInt		, myValueInt);
+		StaticSerializer.AddToDictionary(myKeyFloat	, myValueFloat);
+		StaticSerializer.AddToDictionary(myKeyList	, myValueList);
+		StaticSerializer.AddToDictionary(myKeyImage	, myValueImage);
 		
-		Serializer.SaveDictionary(filePath);	
+		StaticSerializer.SaveDictionary(filePath);	
 	}
 	
 	public void LoadInfo(){
-		Serializer.LoadDictionary(filePath);
+		StaticSerializer.LoadDictionary(filePath);
 
 		string str = "";
 
-		str += "Key String(" + myKeyString + ") - Value(" + (string)Serializer.GetFromDictionary(myKeyString) + ")\n";
-		str += "Key Int(" + myKeyInt + ") - Value(" + (int)Serializer.GetFromDictionary(myKeyInt) + ")\n";
-		str += "Key Float(" + myKeyFloat + ") - Value(" + (float)Serializer.GetFromDictionary(myKeyFloat) + ")\n";
+		str += "Key String(" + myKeyString + ") - Value(" + (string)StaticSerializer.GetFromDictionary(myKeyString) + ")\n";
+		str += "Key Int(" + myKeyInt + ") - Value(" + (int)StaticSerializer.GetFromDictionary(myKeyInt) + ")\n";
+		str += "Key Float(" + myKeyFloat + ") - Value(" + (float)StaticSerializer.GetFromDictionary(myKeyFloat) + ")\n";
 
-		List<int> myList = (List<int>)Serializer.GetFromDictionary(myKeyList);
+		List<int> myList = (List<int>)StaticSerializer.GetFromDictionary(myKeyList);
 		string l = "";
 		for(int i = 0 ; i < myList.Count ; ++i){
 			l += myList[i] + ",";
@@ -169,7 +169,7 @@ public class Test : MonoBehaviour {
 		text_Output.text = str;
 
 		image_Output.color = Color.white;
-		image_Output.texture = (Texture2D)Serializer.GetFromDictionary(myKeyImage);
+		image_Output.texture = (Texture2D)StaticSerializer.GetFromDictionary(myKeyImage);
 
 		if(image_Output.texture != null && image_Output.texture.width > 0 && image_Output.texture.height > 0){
 			float ratio_image = (float)image_Output.texture.width / (float)image_Output.texture.height;
